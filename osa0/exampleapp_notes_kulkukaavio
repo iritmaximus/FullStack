@@ -1,0 +1,30 @@
+title exampleapp kulkukaavio
+
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note
+palvelin->selain: Uudelleenohjauspyyntö .../exampleapp/notes
+
+note over palvelin:
+Palvelin kehottaa selainta päivittämään
+sivun, joka aiheuttaa viisi uutta
+GET pyyntöä
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/notes
+palvelin->selain: HTML koodi
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+palvelin->selain: main.css
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.js
+palvelin->selain: main.js
+
+note over selain:
+selain suorittaa js-koodin joka
+kutsuu json-tietoa eli eri viestejä
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+palvelin->selain: {{"content":"x","date":"2021...}}
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/favicon.ico
+palvelin->selain: favicon.ico
