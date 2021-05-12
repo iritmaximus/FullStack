@@ -1,0 +1,10 @@
+title Untitled
+
+selain->palvelin: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+palvelin->selain: {"message":"note created"}
+
+note over palvelin:
+Palvelin vastaa POST kutsuun viestillä,
+viesti luotu ja uusi postaus ilmesstyy
+sivulle
+end note
