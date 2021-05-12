@@ -1,0 +1,19 @@
+title Untitled
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+palvelin->selain: HTML-koodi
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/main.css
+palvelin->selain: main.css
+selain->palvelin: https://studies.cs.helsinki.fi/exampleapp/spa.js
+palvelin->selain: spa.js
+
+note over selain:
+selain suorittaa spa.js koodia ja kutsuu
+sen kautta JSON-koodia palvelimelta
+end note
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/exampleapp/data.json
+palvelin->selain: {{ "content":"plää2","date":... }}
+
+selain->palvelin: HTTP GET https://studies.cs.helsinki.fi/favicon.ico
+palvelin->selain: favico.ico
