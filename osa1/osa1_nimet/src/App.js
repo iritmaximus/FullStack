@@ -1,27 +1,26 @@
 import React from 'react'
 
-const Hello = (props) => {
-  const bornYear = () => {
-    const yearNow = new Date().getFullYear()
-    return yearNow = props.age
-  }
+const Hello = ({ name, age }) => {
+
+  const bornYear = () => new Date().getFullYear() - age
 
   return (
-      <div>
-          <p>Hello {props.name}</p>
-          <p>So you were propably born {bornYear()}</p>
-      </div>
+    <div>
+      <p>Hello {name}, you are {age} years old</p>
+      <p>So you were probably born {bornYear()}</p>
+    </div>
   )
 }
-
 const App = () => {
-    return (
-        <div>
-          <h1>Greetings</h1>
-          <Hello name='Maya'/>
-          <Hello name='Pööpeli'/>
-          <Hello name='Wakas'/>
-      </div>
+  const nimi = 'Pekka'
+  const ika = 10
+
+  return (
+    <div>
+      <h1>Greetings</h1>
+      <Hello name="Maya" age={26 + 10} />
+      <Hello name={nimi} age={ika} />
+    </div>
   )
 }
 
