@@ -33,7 +33,6 @@ const Button = ({ text, handleClick }) => {
         text='reset'
         handleClick={reset}
       />
-
     </div>
   )
 }
