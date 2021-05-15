@@ -1,25 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-const Hello = ({ name, age }) => {
+const App = () => {
+  const [ counter, setCounter ] = useState(0)
 
-  const bornYear = () => new Date().getFullYear() - age
+const increaseByOne = () => setCounter(counter + 1)
+const reset = () => setCounter(0)
+const decreaseByOne = () => setCounter(counter - 1)
 
+const Display = ({ counter }) => <div>{counter}</div>
+
+const Button = ({ text, handleClick }) => {
   return (
-    <div>
-      <p>Hello {name}, you are {age} years old</p>
-      <p>So you were probably born {bornYear()}</p>
-    </div>
+    <button onClick={handleClick}>
+      {text}
+    </button>
+
   )
 }
-const App = () => {
-  const nimi = 'Pekka'
-  const ika = 10
 
   return (
     <div>
-      <h1>Greetings</h1>
-      <Hello name="Maya" age={26 + 10} />
-      <Hello name={nimi} age={ika} />
+      <Display counter={counter} />
+      <Button
+        text='plus'
+        handleClick={increaseByOne}
+      />
+      <Button
+        text='minus'
+        handleClick={decreaseByOne}
+      />
+      <Button
+        text='reset'
+        handleClick={reset}
+      />
+
     </div>
   )
 }
