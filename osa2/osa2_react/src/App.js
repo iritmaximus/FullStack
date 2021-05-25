@@ -1,93 +1,123 @@
-import React, { useEffect, useState } from 'react'
-import Note from './components/Note'
-import noteService from './services/notes'
+import React, { useState, useEffect } from 'react'
+import Persons from './components/Persons'
+import PersonForm from './components/PersonForm'
+import Filter from './components/Filter'
+import personService from './services/persons'
 
-const App = (props) => {  
-  const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('A new note...')
-  const [showAll, setShowAll] = useState(true)
 
+
+const App = () => {
+  const [ persons, setPersons ] = useState([])
 
   useEffect(() => {
-    noteService
+    personService
       .getAll()
-      .then(initialNotes => {
-        setNotes(initialNotes)
-      })
-  }, [])  
+        .then(initialPersons => setPersons(initialPersons))
+  }, [])
   
-  console.log('Render', notes.length, 'notes.')
+  const [ newName, setNewName ] = useState('')
+  const [ newNumber, setNewNumber ] = useState('')
+  const [ newFilter, setNewFilter ] = useState('')
+  const [ showAll, setShowAll ] = useState(true)
   
-  const addNote = event => {
+
+  const addPerson = (event) => {
     event.preventDefault()
-    const noteObject = {
-      content: newNote,
-      date: new Date().toISOString(),
-      important: Math.random() > 0.5,
+    console.log('Button clicked...', event.target)
+    const newPerson = {
+      name: newName,
+      number: newNumber,
+      id: Number(persons[persons.length - 1].id) + 1  
     }
 
-   noteService 
-    .create(noteObject)
-    .then(returnedNote => {
-      setNotes(notes.concat(returnedNote))
-      setNewNote('')
-    })
-  } 
-      
-  
+    if (persons.find(person => person.name === newName) !== undefined) {
+      const result = window.confirm(
+        `${newName} is already in the phonebook. Replace the old number with a new one?`
+      )
 
-  const toggleImportanceOf = (id) => {
-    console.log('Importance of', id, 'needs to be toggled.')
-    const note = notes.find(n => n.id === id)
-    const changedNote = { ...note, important: !note.important }
+      if (result) {
+        personService
+          .update(persons.find(person => person.name === newName).id, newPerson)  
+          .then(setPersons(persons.map(person => person.name === newName ? newPerson : person)))
+      } 
 
-    noteService
-      .update(id, changedNote)
-      .then(returnedNote => {
-        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-      })
-  }
-  
-  
+    } else {
+      personService
+        .add(newPerson, newPerson.id)
+      setPersons(persons.concat(newPerson))
 
-   
+      console.log('Persons', persons)
+    }
 
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
+    setNewName('')
+    setNewNumber('')
   }
 
-  const notesToShow = showAll
-    ? notes
-    : notes.filter(note => note.important === true)
+  const removePerson = (name, id) => {
+    const result = window.confirm(`Delete ${name}?`)
+
+    if (result) {
+      personService 
+        .remove(id)
+        .then(
+          setPersons(persons.filter(person => person.id !== id))
+        )
+    }
+  }
+
+
+  const filteredPersons = showAll 
+    ? persons 
+    // vähän ikävän näköinen, mutta molemmat muunnetaan pieniksi kirjaimiksi
+    : persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+  
+
+  const handleNewName = (event) => {
+    console.log('Name:', event.target.value)
+    setNewName(event.target.value)
+  }
+
+  const handleNewNumber = (event) => {
+    console.log('Number:', event.target.value)
+    setNewNumber(event.target.value)
+  }
+
+  const handleNewFilter = (event) => {
+    console.log('Filter:', event.target.value)
+    setNewFilter(event.target.value)
+
+    if (newFilter !== '') {
+      setShowAll(false)
+    }
+
+  }
+
 
   return (
     <div>
-      <h1>Notes</h1>
+      <h2>Phonebook</h2>
       <div>
-        <button onClick={() => setShowAll(!showAll)}>
-          Show {showAll ? 'important' : 'all'}
-        </button>
-      </div>
-      <ul>
-        <>
-          {notesToShow.map(note => 
-            <Note 
-            key={note.id} 
-            note={note} 
-            toggleImportance={() => toggleImportanceOf(note.id)}/>
-          )}
-        </>
-      </ul>
-      <form onSubmit={addNote}>
-        <input 
-        value={newNote}
-        onChange={handleNoteChange}
+        <Filter 
+        newFilter={newFilter}
+        handleNewFilter={handleNewFilter}
         />
-        <button type='submit'>Save</button>
-      </form>
+      </div>
+      <div>
+        <PersonForm 
+        addPerson={addPerson}
+        newName={newName}
+        newNumber={newNumber}
+        handleNewName={handleNewName}
+        handleNewNumber={handleNewNumber}
+        />
+      </div>
+      
+      <h2>Numbers</h2>
+      <Persons 
+      persons={filteredPersons}
+      removePerson={removePerson} />
     </div>
   )
 }
 
-export default App 
+export default App
