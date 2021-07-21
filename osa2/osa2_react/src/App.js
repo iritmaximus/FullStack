@@ -3,7 +3,7 @@ import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import personService from './services/persons'
-
+import Notification from './components/Notification'
 
 
 const App = () => {
@@ -19,6 +19,8 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
   const [ showAll, setShowAll ] = useState(true)
+  const [ message, setMessage ] = useState(null)
+  const [ isError, setIsError ] = useState(false)
   
 
   const addPerson = (event) => {
@@ -39,12 +41,25 @@ const App = () => {
         personService
           .update(persons.find(person => person.name === newName).id, newPerson)  
           .then(setPersons(persons.map(person => person.name === newName ? newPerson : person)))
+        
+          setMessage(`Updated ${newName}'s number`)
+        setIsError(false)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       } 
 
     } else {
       personService
         .add(newPerson, newPerson.id)
       setPersons(persons.concat(newPerson))
+
+      setMessage(`${newName} added to the phonebook`)
+      setIsError(false)
+
+      setTimeout(() => {
+        setMessage(null)
+      }, 5000)
 
       console.log('Persons', persons)
     }
@@ -60,8 +75,16 @@ const App = () => {
       personService 
         .remove(id)
         .then(
-          setPersons(persons.filter(person => person.id !== id))
-        )
+          setPersons(persons.filter(person => person.id !== id)))
+        
+        .catch(error => {
+          setMessage(
+            `Information of ${person.name} was already removed from the server`
+          )
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+        })
     }
   }
 
@@ -96,6 +119,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} isError={isError}/>
       <div>
         <Filter 
         newFilter={newFilter}
@@ -113,6 +137,7 @@ const App = () => {
       </div>
       
       <h2>Numbers</h2>
+
       <Persons 
       persons={filteredPersons}
       removePerson={removePerson} />
